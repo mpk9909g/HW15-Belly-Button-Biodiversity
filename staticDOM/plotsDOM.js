@@ -111,26 +111,13 @@ function buildDemograph(sampleId){
 
         let demos = data.metadata;
         let demoArray = demos.filter(s => s.id === parseInt(sampleId));
-        // let demoResult = demoArray[0];
 
-        // console.log("sampleId:");
-        // console.log(sampleId);
-        // console.log("samples:");
-        // console.log(samples);
-        // console.log("sampleArray:");
-        // console.log(sampleArray);
-        // console.log("sampleResult:");
-        // console.log(sampleResult);
+        
 
-
-        // console.log("demos:");
-        // console.log(demos);
         console.log("demoArray:");
         console.log(demoArray);
-        // console.log("demoResult:");
-        // console.log(demoResult);
 
-        //populate the Demographic info section
+            //populate the Demographic info section
         
 
 
@@ -145,15 +132,82 @@ function buildDemograph(sampleId){
 
 }
 
+function buildGauge(sampleId){
+    console.log(`SHOW DEMGRAPHIC ID (${sampleId})`)
+    d3.json("samples.json").then(data=> {
+        //console.log(data);
+        let samples = data.samples;
+        let sampleArray = samples.filter(s => s.id === sampleId);
+        let sampleResult = sampleArray[0];
+
+        let demos = data.metadata;
+        let demoArray = demos.filter(s => s.id === parseInt(sampleId));
+
+        let washFrq = demoArray[0].wfreq
+
+        console.log("demoArray:");
+        console.log(demoArray);
+
+        console.log("demoArray wfreq:");
+        console.log(washFrq);
+
+        //populate the Demographic info section
+        
+
+
+
+        //let demo = d3.select("#gauge");
+        
+        //demo.selectAll("div").remove();
+       //Object.entries(demoArray[0]).forEach(([key, value]) => demo.append("div").text(`${key}: ${value}`));
+      
+       var data = [
+        {
+          domain: { x: [0, 1], y: [0, 1] },
+          value: washFrq,
+          title: { text: "Belly Button Scrubs per Week" },
+          label: { text: "Scrubs per Week" },
+          type: "indicator",
+          mode: "gauge+number", //+delta",
+          //delta: { reference: 380 },
+          gauge: {
+            axis: { range: [null, 9], dtick: 1},
+
+            steps: [
+              { range: [0, 2], color: "salmon" },
+              { range: [2, 4], color: "yellow" },
+              { range: [4, 9], color: "chartreuse" }
+            ],
+            threshold: {
+              line: { color: "purple", width: 4 },
+              thickness: 0.75,
+              value: washFrq
+            }
+          }
+        }
+      ];
+      
+      var layout = { width: 600, height: 450, margin: { t: 0, b: 0 } };
+      Plotly.newPlot('gauge', data, layout);
+    });
+
+
+}
+
+
+
+
+// optionChanged gets called automatically when the dropdown selector changes
 function optionChanged(id) {
-    console.log(`optionChanged ${id}`);
+    console.log(`optionChanged ${id}`); 
 
     DrawBarchart(id);
     DrawBubblechart(id);
     buildDemograph(id);
+    buildGauge(id);
 }
 
-optionChanged();
+// optionChanged();
 
 
 
@@ -187,6 +241,7 @@ function InitDashboard()
         DrawBarchart(sampleId);
         DrawBubblechart(sampleId);
         buildDemograph(sampleId);
+        buildGauge(sampleId);
 
         
 
@@ -199,6 +254,14 @@ function InitDashboard()
 
 
 }
+
+
+//the below is basically the same code as in the html line 25....
+//....you would have to pass in the id to optionChanged here as well
+
+//d3.select("#selDataset").on("change",optionChanged);
+
+
 
 InitDashboard();
 
